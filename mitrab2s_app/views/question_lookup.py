@@ -136,7 +136,7 @@ class QuestionHighestVoteView(APIView):
                            q.question_text 
                     from question q 
                     join answer a on (q.id=a.question_id_id)  
-                    group by 2 order by question_text desc limit 1 """
+                    group by 2 limit 1 """
         LOGGER.debug(query)
         query_result = execute_query_return_query_result(query=query)
         LOGGER.debug("Query Result: %s", query_result)
