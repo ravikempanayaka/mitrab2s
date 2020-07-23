@@ -1,12 +1,10 @@
 import logging
-import json
 import getpass
 from datetime import datetime
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from ..models import Question, Answer
-from ..utils.utils import execute_query_return_query_result
+from ..models import Question
 from ..serializers import QuestionSerializer
 
 LOGGER = logging.getLogger(__name__)
@@ -54,6 +52,7 @@ class QuestionView(APIView):
             return_status = status.HTTP_400_BAD_REQUEST
         return Response(data=data, status=return_status)
 
+    @staticmethod
     def post(self, request, **kwargs):
         """
 
@@ -100,11 +99,13 @@ class QuestionView(APIView):
                 return_status = status.HTTP_400_BAD_REQUEST
         return Response(data=return_dict, status=return_status)
 
+    @staticmethod
     def patch(self, request, **kwargs):
         """
 
         :param request:
         :param kwargs:
+        :param self:
         :return:
         """
         LOGGER.debug("Inside question patch method")
@@ -132,10 +133,11 @@ class QuestionView(APIView):
             LOGGER.debug("question text: %s", question_text)
 
         if user_id and question_text:
-            question_obj = Question.objects.filter(user_id=user_id).update(question_text=question_text,
-                                                                           modify_datetime=datetime.now(),
-                                                                           modify_program=__name__,
-                                                                           modify_user=getpass.getuser())
+            question_obj = Question.objects.filter(user_id=user_id,
+                                                   id=question_id).update(question_text=question_text,
+                                                                          modify_datetime=datetime.now(),
+                                                                          modify_program=__name__,
+                                                                          modify_user=getpass.getuser())
             LOGGER.debug("Question update are: %s", question_obj)
             return_status = status.HTTP_204_NO_CONTENT
         else:
