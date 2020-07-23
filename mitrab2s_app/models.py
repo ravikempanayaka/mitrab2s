@@ -32,7 +32,7 @@ class Answer(Tracker):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     question_id = models.ForeignKey(Question, on_delete=models.CASCADE)
     answer_text = models.CharField(max_length=200, help_text="Write your text here ..")
-    upvote = models.IntegerField(default=0)
+    upvote = models.IntegerField(default=0, null=True, blank=True)
 
     def __str__(self):
         return "%s | %s | %s | %s " % (self.answer_text, self.upvote, self.user_id_id, self.question_id_id)

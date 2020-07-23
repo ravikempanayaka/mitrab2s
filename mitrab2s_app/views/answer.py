@@ -110,11 +110,13 @@ class AnswerView(APIView):
         question_id = None
         upvote = None
         return_status = None
-        user_id = self.kwargs['user_id']
-        LOGGER.debug("user_id: %s", user_id)
+        # user id get from kwargs or query_params now i take query params
+        # user_id = self.kwargs['user_id']
+        # LOGGER.debug("user_id: %s", user_id)
+        user_id = request.query_params['user_id']
 
-        if 'question_id' in request.data['question_id']:
-            question_id = request.data['question_id']
+        if 'question_id' in request.query_params:
+            question_id = request.query_params['question_id']
             LOGGER.debug("Question Id: %s", question_id)
         else:
             LOGGER.debug("question id not in the request so we consider from only user id")
@@ -126,7 +128,10 @@ class AnswerView(APIView):
                 if 'upvote' in request.data['upvote']:
                     upvote = request.data['upvote']
                     LOGGER.debug("Upvote are: %s", upvote)
-                    answer_obj.update(upvote=upvote)
+                    answer_obj.update(upvote=upvote,
+                                      modify_datetime=datetime.now(),
+                                      modify_program=__name__,
+                                      modify_user=getpass.getuser())
                     return_status = status.HTTP_204_NO_CONTENT
                 else:
                     LOGGER.debug("upvote not in the request")
@@ -136,12 +141,12 @@ class AnswerView(APIView):
             answer_obj = Answer.objects.filter(user_id=user_id)
 
             if answer_obj:
-                answer_obj.update(upvote=upvote)
+                answer_obj.update(upvote=upvote,
+                                  modify_datetime=datetime.now(),
+                                  modify_program=__name__,
+                                  modify_user=getpass.getuser())
                 return_status = status.HTTP_204_NO_CONTENT
             else:
                 LOGGER.debug("User ID not in the table")
                 return_status = status.HTTP_400_BAD_REQUEST
         return Response(data=None, status=return_status)
-
-
-
